@@ -1,0 +1,8 @@
+/coverage
+/coverage-e2e
+/data
+/dist
+/node_modules
+/test
+
+
