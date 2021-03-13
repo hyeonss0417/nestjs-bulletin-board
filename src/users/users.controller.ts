@@ -12,7 +12,7 @@ export class UesrsController {
   constructor(private readonly usersService: UsersService) {}
 
   @Public()
-  @Post('sign-up')
+  @Post()
   async signUp(@Body() createUesrDto: CreateUesrDTO): Promise<User> {
     return await this.usersService.signUp(createUesrDto);
   }
