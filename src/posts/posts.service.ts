@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { CreateCommentDTO } from './dto/create-comment.input';
@@ -38,7 +38,7 @@ export class PostsService {
     const post = await this.findOneOrFail(postId);
 
     if (post.writerId !== userId)
-      throw new ForbiddenException('게시물 작성자만 수정할 수 있습니다.');
+      throw new UnauthorizedException('게시물 작성자만 수정할 수 있습니다.');
 
     return this.postsRepository.save({
       ...post,
@@ -50,7 +50,7 @@ export class PostsService {
     const post = await this.findOneOrFail(postId, { select: ['id', 'writerId'] });
 
     if (post.writerId !== userId)
-      throw new ForbiddenException('게시물 작성자만 삭제할 수 있습니다.');
+      throw new UnauthorizedException('게시물 작성자만 삭제할 수 있습니다.');
 
     await this.postsRepository.remove(post);
     return true;
@@ -88,7 +88,7 @@ export class PostsService {
     const comment = await this.findOneCommentOrFail(id);
 
     if (comment.writerId !== userId)
-      throw new ForbiddenException('댓글 작성자만 수정할 수 있습니다.');
+      throw new UnauthorizedException('댓글 작성자만 수정할 수 있습니다.');
 
     comment.content = content;
     return this.commentsRepository.save(comment);
@@ -98,7 +98,7 @@ export class PostsService {
     const comment = await this.commentsRepository.findOneOrFail(id, { relations: ['post'] });
 
     if (comment.writerId !== userId && comment.post.writerId)
-      throw new ForbiddenException('댓글 작성자 혹은 글 작성자만 삭제할 수 있습니다.');
+      throw new UnauthorizedException('댓글 작성자 혹은 글 작성자만 삭제할 수 있습니다.');
 
     await this.commentsRepository.delete(id);
     return true;

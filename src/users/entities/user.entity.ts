@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsInt, IsString } from 'class-validator';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Post } from '../../posts/entities/post.entity';
 import { Comment } from '../../posts/entities/comment.entity';
 
@@ -20,7 +20,8 @@ import { Comment } from '../../posts/entities/comment.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  @Field(type => Number)
+  @Field(type => Int)
+  @IsInt()
   id: number;
 
   @Column({ unique: true })

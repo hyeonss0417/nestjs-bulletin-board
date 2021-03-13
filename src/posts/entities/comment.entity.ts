@@ -10,31 +10,31 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Post } from './post.entity';
-import { IsNumber, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsString } from 'class-validator';
 
 @InputType('CommentInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Comment {
   @PrimaryGeneratedColumn()
-  @IsNumber()
-  @Field(type => Number)
+  @IsInt()
+  @Field(type => Int)
   id: number;
+
+  @Column()
+  @Field(type => Int)
+  @IsInt()
+  writerId: number;
+
+  @Column()
+  @Field(type => Int)
+  @IsInt()
+  postId: number;
 
   @Column()
   @Field(type => String)
   @IsString()
   content: string;
-
-  @Column()
-  @Field(type => Number)
-  @IsNumber()
-  writerId: number;
-
-  @Column()
-  @Field(type => Number)
-  @IsNumber()
-  postId: number;
 
   @Field(type => User)
   @ManyToOne(

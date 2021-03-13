@@ -1,5 +1,5 @@
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { ObjectType, Field, InputType, Int } from '@nestjs/graphql';
+import { IsInt, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -18,13 +18,13 @@ import { User } from '../../users/entities/user.entity';
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn()
-  @IsNumber()
-  @Field(type => Number)
+  @Field(type => Int)
+  @IsInt()
   id: number;
 
   @Column()
-  @Field(type => Number)
-  @IsNumber()
+  @Field(type => Int)
+  @IsInt()
   writerId: number;
 
   @Column()
