@@ -48,17 +48,18 @@ export class PostsResolver {
   @Mutation(() => Post)
   async updatePost(
     @AuthUser() user: User,
+    @Args('id', { type: () => Int }) postId: number,
     @Args('input') updatePostInput: UpdatePostDto,
   ): Promise<Post> {
-    return await this.postsService.update(user.id, updatePostInput);
+    return await this.postsService.update(user.id, postId, updatePostInput);
   }
 
   @Mutation(() => Boolean)
   async deletePost(
     @AuthUser() user: User,
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => Int }) postId: number,
   ): Promise<boolean> {
-    return await this.postsService.remove(user.id, id);
+    return await this.postsService.remove(user.id, postId);
   }
 
   // ========== Comment ==========

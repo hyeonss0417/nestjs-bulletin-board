@@ -24,27 +24,6 @@ export class PostsController {
     return await this.postsService.findOneOrFail(id);
   }
 
-  @Post()
-  async createPost(@Req() { user }: { user: User }, @Body() createPostDto: CreatePostDto) {
-    return await this.postsService.create(user.id, createPostDto);
-  }
-
-  @Patch(':id')
-  async updatePost(
-    @Req() { user }: { user: User },
-    @Param('id') id: number,
-    @Body() updatePostDto: UpdatePostDto,
-  ) {
-    updatePostDto.id = id;
-    return await this.postsService.update(user.id, updatePostDto);
-  }
-
-  @Delete(':id')
-  async deletePost(@Req() { user }: { user: User }, @Param('id') id: number) {
-    return await this.postsService.remove(user.id, id);
-  }
-
-  // ========== Comment ===========
   @Public()
   @Get(':postId/comments')
   async findCommentsAsPagination(
@@ -54,6 +33,26 @@ export class PostsController {
     return await this.postsService.findCommentsAsPagination(postId, paginateComment);
   }
 
+  @Post()
+  async createPost(@Req() { user }: { user: User }, @Body() createPostDto: CreatePostDto) {
+    return await this.postsService.create(user.id, createPostDto);
+  }
+
+  @Patch(':id')
+  async updatePost(
+    @Req() { user }: { user: User },
+    @Param('id') postId: number,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    return await this.postsService.update(user.id, postId, updatePostDto);
+  }
+
+  @Delete(':id')
+  async deletePost(@Req() { user }: { user: User }, @Param('id') id: number) {
+    return await this.postsService.remove(user.id, id);
+  }
+
+  // ========== Comment ===========
   @Post(':postId/comments')
   async createComment(
     @Param('postId') postId: number,

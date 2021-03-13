@@ -34,8 +34,8 @@ export class PostsService {
     return await this.postsRepository.save({ writer: { id: userId }, ...createPostDto });
   }
 
-  async update(userId: number, updatePostdto: UpdatePostDto): Promise<Post> {
-    const post = await this.findOneOrFail(updatePostdto.id);
+  async update(userId: number, postId: number, updatePostdto: UpdatePostDto): Promise<Post> {
+    const post = await this.findOneOrFail(postId);
 
     if (post.writerId !== userId)
       throw new ForbiddenException('게시물 작성자만 수정할 수 있습니다.');
@@ -46,8 +46,8 @@ export class PostsService {
     });
   }
 
-  async remove(userId: number, id: number): Promise<boolean> {
-    const post = await this.findOneOrFail(id, { select: ['id', 'writerId'] });
+  async remove(userId: number, postId: number): Promise<boolean> {
+    const post = await this.findOneOrFail(postId, { select: ['id', 'writerId'] });
 
     if (post.writerId !== userId)
       throw new ForbiddenException('게시물 작성자만 삭제할 수 있습니다.');
