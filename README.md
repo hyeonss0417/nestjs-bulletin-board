@@ -1,20 +1,96 @@
-# 택시 배차 앱 API
+# Bulletin Board API
 
-## 기술스택
+Bulletin board REST/GraphQL API with NestJS + TypeORM + GraphQL
+
+## Tech Stack
 
 - NestJS
 - TypeScript
 - TypeORM
 - SQLite3
+- GraphQL
 - Docker
 - PM2
 
 ## 라우팅
 
-- `POST http://${hostname}:3000/users/sign-up`
-- `POST http://${hostname}:3000/users/sign-in`
-- `GET http://${hostname}:3000/taxi-requests/`
-- `POST http://${hostname}:3000/taxi-requests/{taxiRequestId}/accept`
+### User
+
+1. 모든 유저 정보 조회
+
+   - REST: `GET http://${hostname}:3000/users/`
+   - GraphQL: `Query users`
+
+2. 특정 유저 정보 조회
+
+   - REST: `GET http://${hostname}:3000/users/${id}`
+   - GraphQL: `Query user(id)`
+
+3. 특정 유저의 게시물 조회
+
+   - REST: `GET http://${hostname}:3000/users/${id}/posts`
+   - GraphQL: `Query user(id) { posts }`
+
+4. 특정 유저의 댓글 조회
+
+   - REST: `GET http://${hostname}:3000/users/${id}/comments`
+   - GraphQL: `Query user(id) { comments }`
+
+5. 계정 생성
+
+   - REST: `POST http://${hostname}:3000/users/`
+   - GraphQL: `Mutation signUp(input)`
+
+6. 로그인
+   - REST: `POST http://${hostname}:3000/users/sign-in`
+   - GraphQL: `Mutation signIn(input)`
+
+### Post
+
+1. 모든 게시물 정보 조회
+
+   - REST: `GET http://${hostname}:3000/posts/`
+   - GraphQL: `Query posts`
+
+2. 특정 게시물 정보 조회
+
+   - REST: `GET http://${hostname}:3000/posts/${id}`
+   - GraphQL: `Query user(id)`
+
+3. 특정 게시물의 댓글 조회
+
+   - REST: `GET http://${hostname}:3000/posts/${id}/comments`
+   - GraphQL: `Query user(id) { posts }`
+
+4. 게시물 작성
+
+   - REST: `POST http://${hostname}:3000/posts/`
+   - GraphQL: `Mutation createPost(input)`
+
+5. 게시물 수정
+
+   - REST: `PATCH http://${hostname}:3000/posts/${id}`
+   - GraphQL: `Mutation updatePost(id, input)`
+
+6. 게시물 삭제
+
+   - REST: `DELETE http://${hostname}:3000/posts/${id}`
+   - GraphQL: `Mutation deletePost(id, input)`
+
+7. 댓글 작성
+
+   - REST: `POST http://${hostname}:3000/posts/${postId}/comments`
+   - GraphQL: `Mutation createComment(input)`
+
+8. 댓글 수정
+
+   - REST: `PATCH http://${hostname}:3000/posts/${postId}/comments/${id}`
+   - GraphQL: `Mutation updateComment(id, input)`
+
+9. 댓글 삭제
+
+   - REST: `DELETE http://${hostname}:3000/posts/${postId}/comments/${id}`
+   - GraphQL: `Mutation deleteComment(id, input)`
 
 ## 실행 방법
 
@@ -52,36 +128,9 @@ $ pm2-runtime start ecosystem.config.js
 
 - User: `src/users/entities/user.entity.ts`
 
-Entity -> Table 생성 시
+- Post: `src/posts/entities/post.entity.ts`
 
-```mysql
-CREATE TABLE "user" (
-    "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "email" varchar NOT NULL, "password" varchar NOT NULL,
-    "userType" varchar NOT NULL,
-    "verified" boolean NOT NULL DEFAULT (0),
-    "createdAt" datetime NOT NULL DEFAULT (datetime('now')),
-    "updatedAt" datetime NOT NULL DEFAULT (datetime('now')),
-    CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email")
-    )
-```
-
-- TaxiRequest: `src/taxi-requests/entities/taxi-request.entity.ts`
-
-Entity -> Table 생성 시
-
-```mysql
-CREATE TABLE "taxi_request" (
-    "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "address" varchar NOT NULL,
-    "status" varchar NOT NULL,
-    "driverId" integer,
-    "passengerId" integer,
-    "acceptedAt" datetime,
-    "createdAt" datetime NOT NULL DEFAULT (datetime('now')),
-    "updatedAt" datetime NOT NULL DEFAULT (datetime('now')),
-    )
-```
+- Comment: `src/posts/entities/comment.entity.ts`
 
 - Database 위치: `data/db.*.sqlite`
 
