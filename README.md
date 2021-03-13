@@ -16,81 +16,97 @@ Bulletin board REST/GraphQL API with NestJS + TypeORM + GraphQL
 
 ### User
 
-1. 모든 유저 정보 조회
+1. 모든 유저 정보 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/users/`
    - GraphQL: `Query users`
+   - Reponses: `200 OK`
 
-2. 특정 유저 정보 조회
+2. 특정 유저 정보 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/users/${id}`
    - GraphQL: `Query user(id)`
+   - Reponses: `200 OK`, `404 Not Found`
 
-3. 특정 유저의 게시물 조회
+3. 특정 유저의 게시물 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/users/${id}/posts`
    - GraphQL: `Query user(id) { posts }`
+   - Reponses: `200 OK`, `404 Not Found`
 
-4. 특정 유저의 댓글 조회
+4. 특정 유저의 댓글 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/users/${id}/comments`
    - GraphQL: `Query user(id) { comments }`
+   - Reponses: `200 OK`, `404 Not Found`
 
-5. 계정 생성
+5. 계정 생성 (Public)
 
    - REST: `POST http://${hostname}:3000/users/`
    - GraphQL: `Mutation signUp(input)`
+   - Reponses: `201 Created`, `400 Bad Request`, `409 Conflict`
 
-6. 로그인
+6. 로그인 (Public)
+
    - REST: `POST http://${hostname}:3000/users/sign-in`
    - GraphQL: `Mutation signIn(input)`
+   - Reponses: `200 OK`, `400 Bad Request`
 
 ### Post
 
-1. 모든 게시물 정보 조회
+1. 모든 게시물 정보 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/posts/`
    - GraphQL: `Query posts`
+   - Reponses: `200 OK`
 
-2. 특정 게시물 정보 조회
+2. 특정 게시물 정보 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/posts/${id}`
    - GraphQL: `Query user(id)`
+   - Reponses: `200 OK`, `404 Not Found`
 
-3. 특정 게시물의 댓글 조회
+3. 특정 게시물의 댓글 조회 (Public)
 
    - REST: `GET http://${hostname}:3000/posts/${id}/comments`
    - GraphQL: `Query user(id) { posts }`
+   - Reponses: `200 OK`, `404 Not Found`
 
-4. 게시물 작성
+4. 게시물 작성 (Authentication)
 
    - REST: `POST http://${hostname}:3000/posts/`
    - GraphQL: `Mutation createPost(input)`
+   - Reponses: `201 Created`, `400 Bad Request`, `401 Unauthorized`
 
-5. 게시물 수정
+5. 게시물 수정 (Authentication)
 
    - REST: `PATCH http://${hostname}:3000/posts/${id}`
    - GraphQL: `Mutation updatePost(id, input)`
+   - Reponses: `200 OK`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found`
 
-6. 게시물 삭제
+6. 게시물 삭제 (Authentication)
 
    - REST: `DELETE http://${hostname}:3000/posts/${id}`
-   - GraphQL: `Mutation deletePost(id, input)`
+   - GraphQL: `Mutation deletePost(id)`
+   - Reponses: `200 OK`, `401 Unauthorized`, `404 Not Found`
 
-7. 댓글 작성
+7. 댓글 작성 (Authentication)
 
    - REST: `POST http://${hostname}:3000/posts/${postId}/comments`
    - GraphQL: `Mutation createComment(input)`
+   - Reponses: `201 Created`, `400 Bad Request`, `401 Unauthorized`
 
-8. 댓글 수정
+8. 댓글 수정 (Authentication)
 
    - REST: `PATCH http://${hostname}:3000/posts/${postId}/comments/${id}`
    - GraphQL: `Mutation updateComment(id, input)`
+   - Reponses: `200 OK`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found`
 
-9. 댓글 삭제
+9. 댓글 삭제 (Authentication)
 
    - REST: `DELETE http://${hostname}:3000/posts/${postId}/comments/${id}`
    - GraphQL: `Mutation deleteComment(id, input)`
+   - Reponses: `200 OK`, `401 Unauthorized`, `404 Not Found`
 
 ## 실행 방법
 
