@@ -14,6 +14,8 @@ Bulletin board REST/GraphQL API with NestJS + TypeORM + GraphQL
 
 ## 라우팅
 
+GraphQL Endpoint: `http://${hostname}:3000/graphql/`
+
 ### User
 
 1. 모든 유저 정보 조회 (Public)
