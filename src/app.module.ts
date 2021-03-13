@@ -1,4 +1,4 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
@@ -11,6 +11,7 @@ import { User } from './users/entities/user.entity';
 import { PostsModule } from './posts/posts.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Comment } from './posts/entities/comment.entity';
+import { ValidationError } from 'class-validator';
 
 @Module({
   imports: [
@@ -54,6 +55,10 @@ import { Comment } from './posts/entities/comment.entity';
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
+        exceptionFactory: (validationErrors: ValidationError[] = []) => {
+          const key = Object.keys(validationErrors[0].constraints)[0];
+          return new BadRequestException(validationErrors[0].constraints[key]);
+        },
       }),
     },
   ],

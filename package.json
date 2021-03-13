@@ -34,6 +34,7 @@
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "gql-query-builder": "^3.5.5",
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.4",
     "joi": "^17.4.0",
