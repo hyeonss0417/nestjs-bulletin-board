@@ -12,7 +12,7 @@ Bulletin board REST/GraphQL API with NestJS + TypeORM + GraphQL
 - Docker
 - PM2
 
-## 라우팅
+## API Specification
 
 GraphQL Endpoint: `http://${hostname}:3000/graphql/`
 
