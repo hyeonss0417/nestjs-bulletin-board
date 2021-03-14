@@ -172,36 +172,39 @@ $ npm run test
 테스트 파일: `test/*.e2e-spec.ts`
 
 ```bash
+PASS  test/users.e2e-spec.ts (10.422 s)
+PASS  test/posts.e2e-spec.ts (15.787 s)
+
 Test Suites: 2 passed, 2 total
-Tests:       18 passed, 18 total
+Tests:       55 passed, 55 total
 Snapshots:   0 total
-Time:        19.832 s
+Time:        16.433 s, estimated 32 s
 ```
 
 커버리지: `/coverage-e2e/lcov-report/index.html` 파일에서 확인 가능
 
-- 96.14% Statements 224/233
-- 88.1% Branches 37/42
-- 95% Functions 38/40
-- 97.03% Lines 196/202
+- 96.07% Statements 465/484
+- 82.35% Branches 28/34
+- 93.41% Functions 156/167
+- 95.87% Lines 418/436
 
 ### unit 테스트 결과
 
 테스트 파일: `src/**/entities/*.entity.spec.ts`
 
 ```bash
-Test Suites: 2 passed, 2 total
-Tests: 6 passed, 6 total
-Snapshots: 0 total
-Time: 7.596 s, estimated 16 s
+ PASS  src/users/entities/user.entity.spec.ts (10.496 s)
+  UserEntity
+    hashPassword
+      ✓ should hash password (94 ms)
+    checkPassword
+      ✓ should be true when password is right (141 ms)
+      ✓ should be false when password is wrong (140 ms)
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        10.666 s
 ```
-
-커버리지: `/coverage/lcov-report/index.html` 파일에서 확인 가능
-
-- 90% Statements 54/60
-- 87.5% Branches 7/8
-- 75% Functions 6/8
-- 89.29% Lines 50/56
 
 ## 환경설정
 
