@@ -71,7 +71,7 @@ export class ApiTest {
   }
 
   // ========== Private Request ==========
-  setToken(test: request.Test, token: String) {
+  setToken(test: request.Test, token: string) {
     return test.set('Authorization', 'Bearer ' + token);
   }
 
@@ -97,6 +97,12 @@ export class ApiTest {
     return this.setToken(this.base().delete(url), token).send(body);
   }
 
+  gqlStringPrivate(query: string, token: string) {
+    return this.setToken(this.base().post(GRAPHQL_ENDPOINT), token)
+      .send({ query })
+      .expect(res => expect(res.body.errors).toBeUndefined());
+  }
+
   gqlQueryPrivate(query: IQueryBuilderOptions | IQueryBuilderOptions[], token: string) {
     return this.setToken(this.base().post(GRAPHQL_ENDPOINT), token)
       .send(gqlBuilder.query(query))
@@ -114,4 +120,63 @@ export class ApiTest {
       .send(gqlBuilder.subscription(query))
       .expect(res => expect(res.body.errors).toBeUndefined());
   }
+}
+
+export const isPost = data => {
+  expect(data).toHaveProperty('id');
+  expect(data).toHaveProperty('writerId');
+  expect(data).toHaveProperty('title');
+  expect(data).toHaveProperty('content');
+  expect(data).toHaveProperty('createdAt');
+  expect(data).toHaveProperty('updatedAt');
+};
+
+export const isUser = data => {
+  expect(data).toHaveProperty('email');
+  expect(data).toHaveProperty('id');
+  expect(data).toHaveProperty('createdAt');
+  expect(data).toHaveProperty('updatedAt');
+};
+
+export const isComment = comment => {
+  expect(comment).toHaveProperty('id');
+  expect(comment).toHaveProperty('writerId');
+  expect(comment).toHaveProperty('postId');
+  expect(comment).toHaveProperty('content');
+  expect(comment).toHaveProperty('createdAt');
+  expect(comment).toHaveProperty('updatedAt');
+};
+
+export const isArrayOf = (data, callback: (t: any) => any) => {
+  expect(data).toEqual(expect.any(Array));
+  const comments = data as Comment[];
+  comments.forEach(callback);
+};
+
+export async function createTestUserAndGetToken(api: ApiTest) {
+  let id, token;
+  const testUser = {
+    email: `${Math.random()
+      .toString(36)
+      .substr(2, 11)}@test.com`,
+    password: 'password',
+  };
+
+  await api
+    .post('/users', testUser)
+    .expect(201)
+    .expect(res => {
+      expect(res.body).toHaveProperty('id');
+      id = res.body.id;
+    });
+
+  await api
+    .post('/users/sign-in', testUser)
+    .expect(200)
+    .expect(res => {
+      expect(res.body).toHaveProperty('accessToken');
+      token = res.body.accessToken;
+    });
+
+  return { id, token };
 }
