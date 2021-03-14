@@ -1,19 +1,17 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import { User } from '../src/users/entities/user.entity';
-import { Post } from '../src/posts/entities/post.entity';
-import { ApiTest } from './common/test.common';
+import { ApiTest, isArrayOf, isComment, isPost, isUser } from './common/test.common';
 import { CreateUserDTO } from '../src/users/dto/create-user.input';
 import { LoginUserDTO } from '../src/users/dto/login-user.dto';
 
 const testUser = {
-  email: 'test1@test.com',
+  email: 'test1@asd.com',
   password: 'string',
 };
 
 const testUser2 = {
-  email: 'test2@test.com',
+  email: 'test2@asd.com',
   password: 'string',
 };
 
@@ -44,21 +42,15 @@ describe('Users (e2e)', () => {
         variables: { input: { type: 'CreateUserDTO!', value: user } },
         fields: ['email', 'id', 'createdAt', 'updatedAt'],
       });
-    const isValid = data => {
-      expect(data).toHaveProperty('email');
-      expect(data).toHaveProperty('id');
-      expect(data).toHaveProperty('createdAt');
-      expect(data).toHaveProperty('updatedAt');
-    };
 
     it('should create account', () => {
       return request(testUser)
         .expect(201)
-        .expect(res => isValid(res.body));
+        .expect(res => isUser(res.body));
     });
 
     it('should create account (GraphQL)', () => {
-      return gqlRequest(testUser2).expect(res => isValid(res.body.data[operation]));
+      return gqlRequest(testUser2).expect(res => isUser(res.body.data[operation]));
     });
 
     it('should fail if email is wrong', () => {
@@ -126,24 +118,15 @@ describe('Users (e2e)', () => {
         operation,
         fields: ['email', 'id', 'createdAt', 'updatedAt'],
       });
-    const isValid = data => {
-      expect(data).toEqual(expect.any(Array));
-      const users = data as User[];
-      users.forEach(user => {
-        expect(user).toHaveProperty('id');
-        expect(user).toHaveProperty('email');
-        expect(user).toHaveProperty('createdAt');
-        expect(user).toHaveProperty('updatedAt');
-      });
-    };
+    const isValid = data => isArrayOf(data, isUser);
 
     it('should reponse all users', () => {
-      request()
+      return request()
         .expect(200)
         .expect(res => isValid(res.body));
     });
     it('should reponse all users (GraphQL)', () => {
-      gqlRequest().expect(res => isValid(res.body.data[operation]));
+      return gqlRequest().expect(res => isValid(res.body.data[operation]));
     });
   });
 
@@ -158,20 +141,14 @@ describe('Users (e2e)', () => {
         fields: ['email', 'id', 'createdAt', 'updatedAt'],
       });
     const userId = 1;
-    const isValid = data => {
-      expect(data).toHaveProperty('id');
-      expect(data).toHaveProperty('email');
-      expect(data).toHaveProperty('createdAt');
-      expect(data).toHaveProperty('updatedAt');
-    };
 
     it('should reponse a user', () => {
       return request(userId)
         .expect(200)
-        .expect(res => isValid(res.body));
+        .expect(res => isUser(res.body));
     });
     it('should reponse a user (GraphQL)', () => {
-      return gqlRequest(userId).expect(res => isValid(res.body.data[operation]));
+      return gqlRequest(userId).expect(res => isUser(res.body.data[operation]));
     });
     it('should fail if user id is invalid', () => {
       return request(-1)
@@ -193,18 +170,7 @@ describe('Users (e2e)', () => {
         fields: [{ posts: ['id', 'writerId', 'title', 'content', 'createdAt', 'updatedAt'] }],
       });
     const userId = 1;
-    const isValid = data => {
-      expect(data).toEqual(expect.any(Array));
-      const posts = data as Post[];
-      posts.forEach(post => {
-        expect(post).toHaveProperty('id');
-        expect(post).toHaveProperty('writerId');
-        expect(post).toHaveProperty('title');
-        expect(post).toHaveProperty('content');
-        expect(post).toHaveProperty('createdAt');
-        expect(post).toHaveProperty('updatedAt');
-      });
-    };
+    const isValid = data => isArrayOf(data, isPost);
 
     it(`should reponse the user's posts`, () => {
       return request(userId)
@@ -234,18 +200,7 @@ describe('Users (e2e)', () => {
         fields: [{ comments: ['id', 'writerId', 'postId', 'content', 'createdAt', 'updatedAt'] }],
       });
     const userId = 1;
-    const isValid = data => {
-      expect(data).toEqual(expect.any(Array));
-      const comments = data as Comment[];
-      comments.forEach(comment => {
-        expect(comment).toHaveProperty('id');
-        expect(comment).toHaveProperty('writerId');
-        expect(comment).toHaveProperty('postId');
-        expect(comment).toHaveProperty('content');
-        expect(comment).toHaveProperty('createdAt');
-        expect(comment).toHaveProperty('updatedAt');
-      });
-    };
+    const isValid = data => isArrayOf(data, isComment);
 
     it(`should reponse the user's comments`, () => {
       return request(userId)
