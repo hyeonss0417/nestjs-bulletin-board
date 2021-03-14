@@ -15,6 +15,7 @@ import { UpdateCommentDTO } from './dto/update-comment.input';
 export class PostsResolver {
   constructor(private readonly postsService: PostsService) {}
 
+  // ========== Post Query ==========
   @Public()
   @Query(() => [Post], { name: 'posts' })
   async findAll(): Promise<Post[]> {
@@ -36,7 +37,7 @@ export class PostsResolver {
     return await this.postsService.findCommentsAsPagination(post.id, paginateCommentDTO);
   }
 
-  // ========== Post ==========
+  // ========== Post Mutation ==========
   @Mutation(() => Post)
   async createPost(
     @AuthUser() user: User,
@@ -62,28 +63,30 @@ export class PostsResolver {
     return await this.postsService.remove(user.id, postId);
   }
 
-  // ========== Comment ==========
+  // ========== Comment CUD ==========
   @Mutation(() => Comment)
   async createComment(
     @AuthUser() user: User,
+    @Args('postId') postId: number,
     @Args('input') createCommentDTO: CreateCommentDTO,
   ): Promise<Comment> {
-    return await this.postsService.createComment(user.id, createCommentDTO);
+    return await this.postsService.createComment(user.id, postId, createCommentDTO);
   }
 
   @Mutation(() => Comment)
   async updateComment(
     @AuthUser() user: User,
+    @Args('commentId') commentId: number,
     @Args('input') updateCommentDTO: UpdateCommentDTO,
   ): Promise<Comment> {
-    return await this.postsService.updateComment(user.id, updateCommentDTO);
+    return await this.postsService.updateComment(user.id, commentId, updateCommentDTO);
   }
 
   @Mutation(() => Boolean)
   async deleteComment(
     @AuthUser() user: User,
-    @Args('id', { type: () => Int }) id: number,
+    @Args('commentId', { type: () => Int }) commentId: number,
   ): Promise<boolean> {
-    return await this.postsService.removeComment(user.id, id);
+    return await this.postsService.removeComment(user.id, commentId);
   }
 }

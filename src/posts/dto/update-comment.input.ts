@@ -3,8 +3,4 @@ import { IsOptional } from 'class-validator';
 import { Comment } from '../entities/comment.entity';
 
 @InputType()
-export class UpdateCommentDTO extends PickType(Comment, ['content']) {
-  @Field(() => Int)
-  @IsOptional()
-  id?: number;
-}
+export class UpdateCommentDTO extends PickType(Comment, ['content']) {}

@@ -1,5 +1,5 @@
 import { ObjectType, Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsString, Length } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -29,7 +29,7 @@ export class Post {
 
   @Column()
   @Field(type => String)
-  @IsString()
+  @Length(1, 200, { message: '제목은 1자 이상 100자 이하로 입력해주세요' })
   title: string;
 
   @Column({ type: 'text' })

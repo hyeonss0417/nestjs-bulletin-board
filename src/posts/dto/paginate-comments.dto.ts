@@ -1,13 +1,13 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @InputType()
 export class PaginateCommentDto {
   @Field(() => Int)
-  @IsNumber()
+  @IsNotEmpty()
   page: number;
 
   @Field(() => Int)
-  @IsNumber()
+  @IsNotEmpty()
   pageSize: number;
 }

@@ -25,7 +25,7 @@ export class PostsService {
     try {
       post = await this.postsRepository.findOneOrFail(id, option);
     } catch (error) {
-      throw new NotFoundException('존재하지 않는 게시글입니다.');
+      throw new NotFoundException('존재하지 않는 게시글입니다');
     }
     return post;
   }
@@ -38,7 +38,7 @@ export class PostsService {
     const post = await this.findOneOrFail(postId);
 
     if (post.writerId !== userId)
-      throw new UnauthorizedException('게시물 작성자만 수정할 수 있습니다.');
+      throw new UnauthorizedException('게시물 작성자만 수정할 수 있습니다');
 
     return this.postsRepository.save({
       ...post,
@@ -50,7 +50,7 @@ export class PostsService {
     const post = await this.findOneOrFail(postId, { select: ['id', 'writerId'] });
 
     if (post.writerId !== userId)
-      throw new UnauthorizedException('게시물 작성자만 삭제할 수 있습니다.');
+      throw new UnauthorizedException('게시물 작성자만 삭제할 수 있습니다');
 
     await this.postsRepository.remove(post);
     return true;
@@ -61,6 +61,7 @@ export class PostsService {
     postId: number,
     { page, pageSize }: PaginateCommentDto,
   ): Promise<Comment[]> {
+    await this.findOneOrFail(postId);
     return await this.commentsRepository.find({
       where: { postId },
       take: pageSize,
@@ -73,32 +74,40 @@ export class PostsService {
     try {
       comment = await this.commentsRepository.findOneOrFail(id, option);
     } catch (error) {
-      throw new NotFoundException('존재하지 않는 댓글입니다.');
+      throw new NotFoundException('존재하지 않는 댓글입니다');
     }
     return comment;
   }
 
-  async createComment(writerId: number, { postId, content }: CreateCommentDTO): Promise<Comment> {
+  async createComment(
+    writerId: number,
+    postId: number,
+    { content }: CreateCommentDTO,
+  ): Promise<Comment> {
     const post = await this.postsRepository.findOne(postId);
-    if (!post) throw new NotFoundException('존재하지 않는 게시글입니다.');
+    if (!post) throw new NotFoundException('존재하지 않는 게시글입니다');
     return await this.commentsRepository.save({ writerId, postId, content });
   }
 
-  async updateComment(userId: number, { id, content }: UpdateCommentDTO): Promise<Comment> {
-    const comment = await this.findOneCommentOrFail(id);
+  async updateComment(
+    userId: number,
+    commentId: number,
+    { content }: UpdateCommentDTO,
+  ): Promise<Comment> {
+    const comment = await this.findOneCommentOrFail(commentId);
 
     if (comment.writerId !== userId)
-      throw new UnauthorizedException('댓글 작성자만 수정할 수 있습니다.');
+      throw new UnauthorizedException('댓글 작성자만 수정할 수 있습니다');
 
     comment.content = content;
     return this.commentsRepository.save(comment);
   }
 
   async removeComment(userId: number, id: number): Promise<boolean> {
-    const comment = await this.commentsRepository.findOneOrFail(id, { relations: ['post'] });
+    const comment = await this.findOneCommentOrFail(id, { relations: ['post'] });
 
     if (comment.writerId !== userId && comment.post.writerId)
-      throw new UnauthorizedException('댓글 작성자 혹은 글 작성자만 삭제할 수 있습니다.');
+      throw new UnauthorizedException('댓글 작성자 혹은 글 작성자만 삭제할 수 있습니다');
 
     await this.commentsRepository.delete(id);
     return true;

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Delete, Patch, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, Patch, Req, Query } from '@nestjs/common';
 import { Public } from '../common/decorators/public.decorator';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -28,7 +28,7 @@ export class PostsController {
   @Get(':postId/comments')
   async findCommentsAsPagination(
     @Param('postId') postId: number,
-    @Body() paginateComment: PaginateCommentDto,
+    @Query() paginateComment: PaginateCommentDto,
   ) {
     return await this.postsService.findCommentsAsPagination(postId, paginateComment);
   }
@@ -59,22 +59,23 @@ export class PostsController {
     @Req() { user }: { user: User },
     @Body() createCommentDto: CreateCommentDTO,
   ) {
-    createCommentDto.postId = postId;
-    return await this.postsService.createComment(user.id, createCommentDto);
+    return await this.postsService.createComment(user.id, postId, createCommentDto);
   }
 
-  @Patch(':postId/comments/:id')
+  @Patch(':postId/comments/:commentId')
   async updateComment(
     @Req() { user }: { user: User },
-    @Param('id') id: number,
+    @Param('commentId') commentId: number,
     @Body() updateCommentDto: UpdateCommentDTO,
   ) {
-    updateCommentDto.id = id;
-    return await this.postsService.updateComment(user.id, updateCommentDto);
+    return await this.postsService.updateComment(user.id, commentId, updateCommentDto);
   }
 
-  @Delete(':postId/comments/:id')
-  async deleteComment(@Req() { user }: { user: User }, @Param('id') id: number) {
-    return await this.postsService.removeComment(user.id, id);
+  @Delete(':postId/comments/:commentId')
+  async deleteComment(
+    @Req() { user }: { user: User },
+    @Param('commentId') commentId: number,
+  ): Promise<boolean> {
+    return await this.postsService.removeComment(user.id, commentId);
   }
 }

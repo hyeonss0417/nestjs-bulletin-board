@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Post } from './post.entity';
-import { IsInt, IsNumber, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsString, Length } from 'class-validator';
 
 @InputType('CommentInputType', { isAbstract: true })
 @ObjectType()
@@ -33,7 +33,7 @@ export class Comment {
 
   @Column()
   @Field(type => String)
-  @IsString()
+  @Length(1, 1000, { message: '댓글은 1자 이상 1000자 이하로 입력해주세요' })
   content: string;
 
   @Field(type => User)
@@ -48,6 +48,7 @@ export class Comment {
   @ManyToOne(
     type => Post,
     comment => comment.comments,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'postId' })
   post: Post;
